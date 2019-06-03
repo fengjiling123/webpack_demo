@@ -1,0 +1,3 @@
+{
+  "presets": [ "@babel/react","@babel/preset-env"]  //babel转义react es6
+}
