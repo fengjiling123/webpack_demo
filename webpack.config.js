@@ -1,15 +1,19 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
+  // mode:'development',
   entry: {
     main: path.join(__dirname, "./src/index.js")
   },
   output: {
     path: path.join(__dirname, "build"),
-    filename: "js/[name].js"
+    filename: "js/[name].[hash:5].js"
   },
+  //webpack-dev-server 在开发环境把编译的文件放在内存中，开发过程中从内存加载文件
   devServer: {
     contentBase: "./build"
   },
@@ -33,6 +37,12 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           { loader: "style-loader" }, //style-loader 将css最终写入html文件
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: path.join(__dirname, "build")
+            }
+          },
           {
             loader: "css-loader", //用于在js中require、import 等方法引入css
             options: {
@@ -59,13 +69,17 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.BannerPlugin("测试webpack搭建"),
+    // new webpack.BannerPlugin("测试webpack搭建"),
+    new CleanWebpackPlugin(), //打包前删除build文件夹下文件
+    new MiniCssExtractPlugin({
+      filename: "css/[name].[hash:5].css" //打包分离css
+    }),
     new HtmlWebpackPlugin({
       template: "./index.html", //源模板文件
       // favicon:'', //指定页面图标
       filename: "index.html", //输出文件路径  相对于webpackConfig.output.path路径而言的
       inject: "body", //1.true或者body：所有JavaScript资源插入到body元素的底部 2.header 3.false 不插入
-      hash: true,
+      // hash: true, // 引入时会在打包好的bundle.js后面加上hash串
       cache: true, //是否需要缓存
       // chunks: ["main"], //设置引入木块，不设置时默认引入全部
       // excludeChunks:[], //排除的模板
