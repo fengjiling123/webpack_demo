@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const NODE_ENV = process.env.NODE_ENV;
 
-module.exports = {
+const config = {
   mode: "none",
   entry: {
     main: path.join(__dirname, "../src/index.js")
@@ -16,7 +16,10 @@ module.exports = {
   //webpack-dev-server 在开发环境把编译的文件放在内存中，开发过程中从内存加载文件
   devServer: {
     contentBase: "./build",
-    port: "8000"
+    port: "8000",
+    historyApiFallback: true, //history路由刷新重定向到index.html
+    hot: true, // hot参数控制更新是刷新整个页面还是局部刷新 HMR
+    inline: true //在包中插入脚本以处理实时重新加载 HMR
   },
   resolve: {
     alias: { "@": "./src" }, //配置别名，映射导入路径
@@ -114,3 +117,9 @@ module.exports = {
     })
   ]
 };
+
+if (NODE_ENV === "development") {
+  config.plugins.push(new webpack.HotModuleReplacementPlugin()); //HMR
+}
+
+module.exports = config;

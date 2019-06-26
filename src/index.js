@@ -1,12 +1,20 @@
 import React from "react";
 import ReactDom from "react-dom";
-import Main from './pages/main';
+import { Router } from "react-router-dom";
+import { createBrowserHistory } from "history";
+import Routes from "./router";
+
+const history = createBrowserHistory();
 
 class App extends React.Component {
   render() {
-    return <div>
-      <Main/>
-    </div>;
+    return (
+      <div>
+        <Router history={history}>
+          <Routes />
+        </Router>
+      </div>
+    );
   }
 }
 

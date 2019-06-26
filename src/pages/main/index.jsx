@@ -11,6 +11,7 @@ class Main extends React.Component {
       <div className="--main">
         <div>Main</div>
         <img src={IMG1} alt="" />
+        <input type="text"/>
       </div>
     );
   }
