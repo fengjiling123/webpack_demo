@@ -2,20 +2,21 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const NODE_ENV = process.env.NODE_ENV;
 
 module.exports = {
-  // mode:'development',
+  mode: "none",
   entry: {
-    main: path.join(__dirname, "./src/index.js")
+    main: path.join(__dirname, "../src/index.js")
   },
   output: {
-    path: path.join(__dirname, "build"),
+    path: path.join(__dirname, "../build"),
     filename: "js/[name].[hash:5].js"
   },
   //webpack-dev-server 在开发环境把编译的文件放在内存中，开发过程中从内存加载文件
   devServer: {
-    contentBase: "./build"
+    contentBase: "./build",
+    port: "8000"
   },
   resolve: {
     alias: { "@": "./src" }, //配置别名，映射导入路径
@@ -23,7 +24,9 @@ module.exports = {
     // modules:['./src/components','node_modules'], //Webpack 去哪些目录下寻找第三方模块
     // descriptionFiles: ['package.json'], //配置描述第三方模块的文件名称，也就是  package.json  文件。默认package.json
   },
-
+  performance: {
+    hints: false
+  },
   module: {
     rules: [
       {
@@ -36,13 +39,14 @@ module.exports = {
         test: /\.(css|less)$/,
         exclude: /node_modules/,
         use: [
-          { loader: "style-loader" }, //style-loader 将css最终写入html文件
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: path.join(__dirname, "build")
-            }
-          },
+          NODE_ENV === "production"
+            ? {
+                loader: MiniCssExtractPlugin.loader, //将css打包成单独的css文件，不支持HMR(模块热替换)
+                options: {
+                  publicPath: path.join(__dirname, "build")
+                }
+              }
+            : { loader: "style-loader" }, //将css打包到js中
           {
             loader: "css-loader", //用于在js中require、import 等方法引入css
             options: {
@@ -65,12 +69,25 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.(png|jpg|gif|jpeg)$/i,
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              limit: 8192, //字节，不超过8192字节（8kb），用于将文件转换为base64 URI
+              name: "[name][hash:5].[ext]", //文件名hash.文件后缀
+              outputPath: "images" //超出限制文件输出路径
+            }
+          }
+        ]
       }
     ]
   },
   plugins: [
     // new webpack.BannerPlugin("测试webpack搭建"),
-    new CleanWebpackPlugin(), //打包前删除build文件夹下文件
+
     new MiniCssExtractPlugin({
       filename: "css/[name].[hash:5].css" //打包分离css
     }),
@@ -88,6 +105,11 @@ module.exports = {
         caseSensitive: false, //大小写不明感
         removeEmptyAttributes: true, //去除空属性
         collapseWhitespace: true //去除空格
+      }
+    }),
+    new webpack.DefinePlugin({
+      "process.env": {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
       }
     })
   ]
