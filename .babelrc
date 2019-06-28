@@ -1,4 +1,4 @@
 {
   "presets": ["@babel/react", "@babel/preset-env"], //babel转义react es6
-  "plugins": ["@babel/plugin-syntax-dynamic-import"]
+  "plugins": ["@babel/plugin-syntax-dynamic-import"] //支持babel语法动态导入的插件
 }

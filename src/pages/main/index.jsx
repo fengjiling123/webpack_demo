@@ -6,12 +6,23 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
   }
+
+  componentDidMount() {
+    console.log("main");
+  }
+
   render() {
     return (
       <div className="--main">
-        <div>Main</div>
+        <div
+          onClick={() => {
+            this.props.history.push("/page1");
+          }}
+        >
+          Main
+        </div>
         <img src={IMG1} alt="" />
-        <input type="text"/>
+        <input type="text" />
       </div>
     );
   }

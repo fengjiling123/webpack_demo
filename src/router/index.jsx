@@ -1,42 +1,40 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { Switch, Route } from "react-router-dom";
-import Loadable from "react-loadable";
 
-// import Main from "../pages/main";
-// import Page1 from "../pages/page_1";
-// import Page2 from "../pages/page_2";
+const Main = lazy(() =>
+  import(/* webpackChunkName: "index" */ "../pages/main")
+);
+const Page1 = lazy(() =>
+  import(/* webpackChunkName: "page1" */ "../pages/page_1")
+);
+const Page2 = lazy(() =>
+  import(/* webpackChunkName:"page2" */ "../pages/page_2")
+);
 
 const routes = [
   {
     path: "/page1",
-    component: Loadable({
-      loader: () => import("../pages/page_1"),
-      loading: () => <div>加载中...</div>
-    }),
+    component: Page1,
     exact: true
   },
   {
     path: "/page2",
-    component: Loadable({
-      loader: () => import("../pages/page_2"),
-      loading: () => <div>加载中...</div>
-    }),
+    component: Page2,
     exact: true
   },
   {
     path: "/",
-    component: Loadable({
-      loader: () => import("../pages/main"),
-      loading: () => <div>加载中...</div>
-    }),
+    component: Main,
     exact: true
   }
 ];
 
 export default () => (
-  <Switch>
-    {routes.map(item => (
-      <Route key={item.path} {...item} />
-    ))}
-  </Switch>
+  <Suspense fallback={<div>加载中...</div>}>
+    <Switch>
+      {routes.map(item => (
+        <Route key={item.path} {...item} />
+      ))}
+    </Switch>
+  </Suspense>
 );

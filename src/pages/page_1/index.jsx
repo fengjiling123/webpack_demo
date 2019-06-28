@@ -5,6 +5,11 @@ class PAGE_1 extends React.Component {
   constructor(props) {
     super(props);
   }
+
+  componentDidMount() {
+    console.log("page1");
+  }
+
   render() {
     return (
       <div

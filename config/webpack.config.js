@@ -5,7 +5,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const NODE_ENV = process.env.NODE_ENV;
 
 const config = {
-  mode: "none",
+  mode: NODE_ENV,  //SourceMap解决源代码和目标生成代码的映射关系,在开发模式下默认配置
+  // devtool:'source-map',
   entry: {
     main: path.join(__dirname, "../src/index.js")
   },
@@ -35,7 +36,7 @@ const config = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        enforce: "pre", // ？？？
+        // enforce: "pre", // 设置loader执行优先级，默认右=》左    'pre|post' 前|后
         use: [{ loader: "babel-loader" }]
       },
       {
